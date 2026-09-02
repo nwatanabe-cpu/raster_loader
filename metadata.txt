@@ -7,8 +7,8 @@ author=R.Kobayashi
 email=your@email.com
 about=プラグイン内部フォルダ（data/）と外部フォルダ（任意追加）を管理。ポリゴンのBBox交差判定でタイルを自動抽出し、VRTとしてQGISレイヤーに追加します。
 
-tracker=https://github.com/yourname/raster-loader/issues
-repository=https://github.com/yourname/raster-loader
+tracker=https://github.com/nwatanabe-cpu/raster_loader/issues
+repository=https://github.com/nwatanabe-cpu/raster_loader
 hasProcessingProvider=no
 category=Raster
 icon=icon.png
