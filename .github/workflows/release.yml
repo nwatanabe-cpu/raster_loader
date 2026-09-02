@@ -29,20 +29,22 @@ jobs:
           PLUGIN_NAME="${{ github.event.repository.name }}"
           VERSION="${{ github.ref_name }}"
 
-          echo "Plugin: $PLUGIN_NAME"
-          echo "Version: $VERSION"
+          echo "Plugin name : $PLUGIN_NAME"
+          echo "Version     : $VERSION"
 
+          # 配布用フォルダ
           mkdir -p "package/$PLUGIN_NAME"
 
+          # リポジトリの内容をコピー
           cp -r . "package/$PLUGIN_NAME/"
 
-          # Git関連・開発用ファイルを除外
+          # 不要ファイルを削除
           rm -rf "package/$PLUGIN_NAME/.git"
           rm -rf "package/$PLUGIN_NAME/.github"
           rm -rf "package/$PLUGIN_NAME/.vscode"
           rm -rf "package/$PLUGIN_NAME/__pycache__"
 
-          # sources.jsonを配布ZIPから除外
+          # sources.jsonは配布ZIPに含めない
           rm -f "package/$PLUGIN_NAME/sources.json"
 
           # ZIP作成
@@ -52,13 +54,21 @@ jobs:
       - name: Verify ZIP
         run: |
           ZIP_FILE="${{ github.event.repository.name }}-${{ github.ref_name }}.zip"
+          PLUGIN_NAME="${{ github.event.repository.name }}"
 
           echo "=== ZIP contents ==="
           unzip -l "$ZIP_FILE"
           echo "===================="
 
+          # sources.jsonが含まれていないことを確認
           if unzip -l "$ZIP_FILE" | grep -q "sources.json"; then
             echo "ERROR: sources.json is included in the ZIP!"
+            exit 1
+          fi
+
+          # プラグインフォルダが正しい名前であることを確認
+          if ! unzip -l "$ZIP_FILE" | grep -q "^.*${PLUGIN_NAME}/__init__.py"; then
+            echo "ERROR: Plugin root folder is incorrect!"
             exit 1
           fi
 
