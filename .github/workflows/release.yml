@@ -33,15 +33,13 @@ jobs:
 
           mkdir -p "package/$PLUGIN_NAME"
 
-          cp -r . "package/$PLUGIN_NAME/"
+          # Gitの現在のタグから配布用ファイルを展開
+          git archive HEAD | tar -x -C "package/$PLUGIN_NAME"
 
-          rm -rf "package/$PLUGIN_NAME/.git"
-          rm -rf "package/$PLUGIN_NAME/.github"
-          rm -rf "package/$PLUGIN_NAME/.vscode"
-          rm -rf "package/$PLUGIN_NAME/__pycache__"
-
+          # 配布ZIPに不要なファイルを削除
           rm -f "package/$PLUGIN_NAME/sources.json"
 
+          # ZIP作成
           cd package
           zip -r "../${PLUGIN_NAME}-${VERSION}.zip" "$PLUGIN_NAME"
 
