@@ -1,5 +1,4 @@
-name: Release QGIS Plugin
-
+name: raster_loader Release
 on:
   push:
     tags:
@@ -33,6 +32,8 @@ jobs:
             --exclude='package' \
             --exclude='__pycache__' \
             --exclude='.vscode' \
+            --exclude='sources.json' \
+
             ./ package/${{ github.event.repository.name }}/
 
           cd package
