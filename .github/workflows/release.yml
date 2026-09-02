@@ -1,4 +1,5 @@
-name: raster_loader Release
+name: Release QGIS Plugin
+
 on:
   push:
     tags:
@@ -15,30 +16,46 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Show files
+        run: |
+          echo "Repository files:"
+          find . -maxdepth 3 -type f | sort
+
       - name: Check metadata
         run: |
-          echo "Checking metadata.txt..."
-          test -f metadata.txt
-          grep "^version=" metadata.txt
+          echo "metadata.txt:"
+          cat metadata.txt
 
       - name: Create plugin ZIP
         run: |
-          mkdir package
-          mkdir package/${{ github.event.repository.name }}
+          mkdir -p package/${{ github.event.repository.name }}
 
-          rsync -av \
-            --exclude='.git' \
-            --exclude='.github' \
-            --exclude='package' \
-            --exclude='__pycache__' \
-            --exclude='.vscode' \
-            --exclude='sources.json' \
+          cp -r . package/${{ github.event.repository.name }}/
 
-            ./ package/${{ github.event.repository.name }}/
+          rm -rf package/${{ github.event.repository.name }}/.git
+          rm -rf package/${{ github.event.repository.name }}/.github
+          rm -rf package/${{ github.event.repository.name }}/.vscode
+          rm -rf package/${{ github.event.repository.name }}/__pycache__
+
+          rm -f package/${{ github.event.repository.name }}/sources.json
 
           cd package
-          zip -r ../${{ github.event.repository.name }}-${{ github.ref_name }}.zip \
+
+          zip -r \
+            ../${{ github.event.repository.name }}-${{ github.ref_name }}.zip \
             ${{ github.event.repository.name }}
+
+      - name: Verify ZIP
+        run: |
+          echo "ZIP contents:"
+          unzip -l ${{ github.event.repository.name }}-${{ github.ref_name }}.zip
+
+          if unzip -l ${{ github.event.repository.name }}-${{ github.ref_name }}.zip | grep -q "sources.json"; then
+            echo "ERROR: sources.json is included!"
+            exit 1
+          fi
+
+          echo "ZIP verification passed."
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
