@@ -21,6 +21,7 @@ jobs:
           echo "=== metadata.txt ==="
           cat metadata.txt
           echo "===================="
+
           test -f metadata.txt
 
       - name: Create plugin ZIP
@@ -36,7 +37,7 @@ jobs:
           # Gitの現在のタグから配布用ファイルを展開
           git archive HEAD | tar -x -C "package/$PLUGIN_NAME"
 
-          # 配布ZIPに不要なファイルを削除
+          # 配布ZIPに含めないファイル
           rm -f "package/$PLUGIN_NAME/sources.json"
 
           # ZIP作成
@@ -52,11 +53,13 @@ jobs:
           unzip -l "$ZIP_FILE"
           echo "===================="
 
+          # sources.jsonが入っていないことを確認
           if unzip -l "$ZIP_FILE" | grep -q "sources.json"; then
             echo "ERROR: sources.json is included in the ZIP!"
             exit 1
           fi
 
+          # 最上位フォルダが正しいことを確認
           if ! unzip -l "$ZIP_FILE" | grep -q "${PLUGIN_NAME}/__init__.py"; then
             echo "ERROR: Plugin root folder is incorrect!"
             exit 1
