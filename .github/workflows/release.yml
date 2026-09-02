@@ -1,4 +1,4 @@
-name: Release QGIS Plugin
+﻿name: Release QGIS Plugin
 
 on:
   push:
@@ -21,7 +21,6 @@ jobs:
           echo "=== metadata.txt ==="
           cat metadata.txt
           echo "===================="
-
           test -f metadata.txt
 
       - name: Create plugin ZIP
