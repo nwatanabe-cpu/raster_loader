@@ -32,22 +32,17 @@ jobs:
           echo "Plugin name : $PLUGIN_NAME"
           echo "Version     : $VERSION"
 
-          # 配布用フォルダ
           mkdir -p "package/$PLUGIN_NAME"
 
-          # リポジトリの内容をコピー
           cp -r . "package/$PLUGIN_NAME/"
 
-          # 不要ファイルを削除
           rm -rf "package/$PLUGIN_NAME/.git"
           rm -rf "package/$PLUGIN_NAME/.github"
           rm -rf "package/$PLUGIN_NAME/.vscode"
           rm -rf "package/$PLUGIN_NAME/__pycache__"
 
-          # sources.jsonは配布ZIPに含めない
           rm -f "package/$PLUGIN_NAME/sources.json"
 
-          # ZIP作成
           cd package
           zip -r "../${PLUGIN_NAME}-${VERSION}.zip" "$PLUGIN_NAME"
 
@@ -60,14 +55,12 @@ jobs:
           unzip -l "$ZIP_FILE"
           echo "===================="
 
-          # sources.jsonが含まれていないことを確認
           if unzip -l "$ZIP_FILE" | grep -q "sources.json"; then
             echo "ERROR: sources.json is included in the ZIP!"
             exit 1
           fi
 
-          # プラグインフォルダが正しい名前であることを確認
-          if ! unzip -l "$ZIP_FILE" | grep -q "^.*${PLUGIN_NAME}/__init__.py"; then
+          if ! unzip -l "$ZIP_FILE" | grep -q "${PLUGIN_NAME}/__init__.py"; then
             echo "ERROR: Plugin root folder is incorrect!"
             exit 1
           fi
