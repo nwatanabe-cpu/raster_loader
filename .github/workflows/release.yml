@@ -36,7 +36,7 @@ jobs:
 
           cp -r . "package/$PLUGIN_NAME/"
 
-          # 不要ファイルを削除
+          # Git関連・開発用ファイルを除外
           rm -rf "package/$PLUGIN_NAME/.git"
           rm -rf "package/$PLUGIN_NAME/.github"
           rm -rf "package/$PLUGIN_NAME/.vscode"
