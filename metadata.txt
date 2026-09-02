@@ -1,0 +1,16 @@
+[general]
+name=Raster Loader
+qgisMinimumVersion=3.0
+description=ポリゴン範囲に交差するラスタタイル（GeoTIFF）を複数フォルダから一括検索してQGISに追加します
+version=2.0.0
+author=R.Kobayashi
+email=your@email.com
+about=プラグイン内部フォルダ（data/）と外部フォルダ（任意追加）を管理。ポリゴンのBBox交差判定でタイルを自動抽出し、VRTとしてQGISレイヤーに追加します。
+
+tracker=https://github.com/nwatanabe-cpu/raster_loader/issues
+repository=https://github.com/nwatanabe-cpu/raster_loader
+hasProcessingProvider=no
+category=Raster
+icon=icon.png
+experimental=False
+deprecated=False

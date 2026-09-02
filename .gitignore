@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+
+.vscode/
+.idea/
+
+*.log
+
+.DS_Store
+Thumbs.db
+# Local environment / user-specific configuration
+sources.json
