@@ -16,42 +16,49 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Show files
-        run: |
-          echo "Repository files:"
-          find . -maxdepth 3 -type f | sort
-
       - name: Check metadata
         run: |
-          echo "metadata.txt:"
+          echo "=== metadata.txt ==="
           cat metadata.txt
+          echo "===================="
+
+          test -f metadata.txt
 
       - name: Create plugin ZIP
         run: |
-          mkdir -p package/${{ github.event.repository.name }}
+          PLUGIN_NAME="${{ github.event.repository.name }}"
+          VERSION="${{ github.ref_name }}"
 
-          cp -r . package/${{ github.event.repository.name }}/
+          echo "Plugin: $PLUGIN_NAME"
+          echo "Version: $VERSION"
 
-          rm -rf package/${{ github.event.repository.name }}/.git
-          rm -rf package/${{ github.event.repository.name }}/.github
-          rm -rf package/${{ github.event.repository.name }}/.vscode
-          rm -rf package/${{ github.event.repository.name }}/__pycache__
+          mkdir -p "package/$PLUGIN_NAME"
 
-          rm -f package/${{ github.event.repository.name }}/sources.json
+          cp -r . "package/$PLUGIN_NAME/"
 
+          # 不要ファイルを削除
+          rm -rf "package/$PLUGIN_NAME/.git"
+          rm -rf "package/$PLUGIN_NAME/.github"
+          rm -rf "package/$PLUGIN_NAME/.vscode"
+          rm -rf "package/$PLUGIN_NAME/__pycache__"
+
+          # sources.jsonを配布ZIPから除外
+          rm -f "package/$PLUGIN_NAME/sources.json"
+
+          # ZIP作成
           cd package
-
-          zip -r \
-            ../${{ github.event.repository.name }}-${{ github.ref_name }}.zip \
-            ${{ github.event.repository.name }}
+          zip -r "../${PLUGIN_NAME}-${VERSION}.zip" "$PLUGIN_NAME"
 
       - name: Verify ZIP
         run: |
-          echo "ZIP contents:"
-          unzip -l ${{ github.event.repository.name }}-${{ github.ref_name }}.zip
+          ZIP_FILE="${{ github.event.repository.name }}-${{ github.ref_name }}.zip"
 
-          if unzip -l ${{ github.event.repository.name }}-${{ github.ref_name }}.zip | grep -q "sources.json"; then
-            echo "ERROR: sources.json is included!"
+          echo "=== ZIP contents ==="
+          unzip -l "$ZIP_FILE"
+          echo "===================="
+
+          if unzip -l "$ZIP_FILE" | grep -q "sources.json"; then
+            echo "ERROR: sources.json is included in the ZIP!"
             exit 1
           fi
 
